@@ -1,0 +1,106 @@
+.red {
+  color: red;
+}
+.item_row {
+  width: 100%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.item_row div {
+  margin-left: 1rem;
+  margin-right: 1rem;
+  min-width: 10%;
+}
+
+.order_row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.5rem;
+  padding-top: 1.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  animation: all 1s linear;
+  transition: all 0.2s linear;
+}
+.order_row:hover {
+  background-color: #e3e3e9;
+}
+.order_row.header {
+  background-color: rgb(4, 87, 165);
+  color: white;
+}
+.order_row.header div:not(:last-child) {
+  border-right: 2px dotted white;
+}
+.order_row.header .user_info {
+  width: 51%;
+}
+.order_row div {
+  width: 17%;
+  max-width: 17%;
+  padding-left: 0.5rem;
+}
+.order_row div.small_cell,
+.order_row.header div.small_cell {
+  max-width: 8%;
+  padding-left: 0.5rem;
+}
+.order_row .user_info {
+  width: 51%;
+  max-width: 51%;
+  display: flex;
+}
+.order_row.header .user_info div,
+.order_row .user_info div {
+  width: 33%;
+  max-width: 33%;
+}
+.order_row.header .user_hidden {
+  color: white;
+  display: none;
+}
+@media (max-width: 950px) {
+  .order_row div.user_info {
+    width: 40%;
+    max-width: 40%;
+    display: flex;
+    flex-direction: column;
+  }
+  .order_row.header .user_info {
+    display: none;
+  }
+  .order_row.header .user_hidden {
+    display: block;
+    width: 40%;
+    max-width: 40%;
+  }
+  .order_row div.header.user_info,
+  .order_row div.user_info div {
+    width: 100%;
+  }
+}
+
+.image_order_thumb {
+  height: 80px;
+  width: auto;
+}
+.bold_text {
+  font-weight: bold;
+}
+.icon-action {
+  background: linear-gradient(to left, #2ebf91, #8360c3);
+  padding: 0.1rem;
+  border-radius: 50%;
+}
+.icon-action:hover {
+  background: rgb(4, 87, 165);
+  cursor: pointer;
+}
