@@ -1,20 +1,28 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import Order from '../../components/Order/Order';
 import OrderDetails from '../../components/OrderDetails/OrderDetails';
 import { GET_ORDERS } from '../../utils/endpoints';
 import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
 
-// onClick={(e) => saveClickHandler(e, order.id, orderItems)}
- function OrdersListPage(props) {
-  
-  const [orders, setOrders] = useState([]);
-  const [orderItems, setOrderItems] = useState([]);
-  const [current_page, setCurrentPage] = useState(0);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [loading, setLoading] = useState(true);
+function OrdersListPage() {
+  const [orders, setOrders] = useState(
+    JSON.parse(sessionStorage.getItem('orders')) || [],
+  );
+  const [orderItems, setOrderItems] = useState(
+    JSON.parse(sessionStorage.getItem('items')) || [],
+  );
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(
+    parseInt(sessionStorage.getItem('nextPage')) || 0,
+  );
+
+  const location = useLocation();
+
   const urlGetOrders = `${ACCOUNT_SERVER_PATH}/${GET_ORDERS}`;
 
   const orderClickHandler = (orderId) => {
@@ -36,9 +44,10 @@ import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
       .split(',')
       .filter((item, index) => index % 2 !== 0);
     const items = [];
-    ids.forEach((id) =>
-      items.push(orderItems.find((o) => o.id === parseInt(id))),
-    );
+    ids.forEach((id) => {
+      const item = orderItems.find((i) => i.id === parseInt(id));
+      items.push(item);
+    });
     return items.map(
       (item, index) =>
         (item = {
@@ -48,62 +57,74 @@ import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
     );
   };
 
-  const findItemsAdv = (itemList) => {
-    const ids = itemList.split(',').filter((item, index) => index % 2 === 0);
-    const quantityArray = itemList
-      .split(',')
-      .filter((item, index) => index % 2 !== 0);
-    const items = [];
-    ids.forEach((id) =>
-      items.push(orderItems.find((o) => o.id === parseInt(id))),
+  const fetch = (currentPage) => {
+    let orderData;
 
-    );
-    return items.map(
-      (item, index) =>
-        (item = {
-          ...item,
-          quantity: quantityArray[index],
-        }),
-    );
-  };
+    const request = axios.request({
+      method: 'get',
+      url: urlGetOrders,
+      params: {
+        current_page: page,
+        items_on_page: 10,
+      },
+      data: {},
+    });
 
-  useEffect(() => {
-    document.addEventListener('scroll', scrollHandler);
-    return function () {
-      document.removeEventListener('scroll', scrollHandler);
-    };
-  }, []);
+    request
+      .then((response) => response.data)
+      .then((data) => {
+        console.log(data);
+        const newOrderItems = [];
+        data.orderPage.items.forEach((item) => {
+          if (orderItems.indexOf(item) === -1) {
+            newOrderItems.push(item);
+          }
+        });
+        const newData = [
+          ...data.orderPage.orders.map(
+            (order) => (order = { ...order, clicked: false }),
+          ),
+        ];
+        if (location !== null && location.state !== null) {
+          orderData = location.state.itemsString;
+          console.log(orderData);
+          const orderId = location.state.orderId;
+          const total = location.state.total;
+          console.log(total);
 
-  const scrollHandler = (e) => {
-    if (
-      e.target.documentElement.scrollHeight -
-        (e.target.documentElement.scrollTop + window.innerHeight) <
-      100
-    ) {
-      setLoading(true);
-    }
-  };
+          let orderEdited = orders.find((obj) => obj.order.id === orderId);
+          let { order } = orderEdited;
+          order = { ...order, total };
+          orderEdited = { ...orderEdited, order, orderItemsDtos: orderData };
+          console.log(orderEdited);
 
-  useEffect(() => {
-    if (props.location.state === null || props.location.state === undefined) {
-      const request = axios.request({
-        method: 'get',
-        url: urlGetOrders,
-        params: {
-          current_page,
-          items_on_page: 10,
-        },
-        data: {},
-      });
-      request
-        .then((response) => response.data)
-        .then((data) => {
-          const newOrderItems = []
-          data.orderPage.items.forEach((item) => {
-            if(orderItems.indexOf(item) === -1) {
-              newOrderItems.push(item)
-            }
-          })
+          const updatedIndex = orders.findIndex((o) => o.order.id === orderId);
+          console.log(updatedIndex);
+          setOrderItems([...orderItems, ...newOrderItems]);
+          setOrders([
+            ...orders.slice(0, updatedIndex),
+            orderEdited,
+            ...orders.slice(updatedIndex + 1),
+            ...data.orderPage.orders.map(
+              (order) => (order = { ...order, clicked: false }),
+            ),
+          ]);
+          sessionStorage.setItem(
+            'items',
+            JSON.stringify([...orderItems, ...newOrderItems]),
+          );
+          sessionStorage.setItem(
+            'orders',
+            JSON.stringify([
+              ...orders.slice(0, updatedIndex),
+              orderEdited,
+              ...orders.slice(updatedIndex + 1),
+              ...data.orderPage.orders.map(
+                (order) => (order = { ...order, clicked: false }),
+              ),
+            ]),
+          );
+        } else {
           setOrderItems([...orderItems, ...newOrderItems]);
           setOrders([
             ...orders,
@@ -111,82 +132,148 @@ import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
               (order) => (order = { ...order, clicked: false }),
             ),
           ]);
-          localStorage.removeItem('orders');
-          localStorage.removeItem('items')
-          localStorage.setItem('items', JSON.stringify(orderItems))
-          localStorage.setItem('orders', JSON.stringify(orders))
-          setCurrentPage((prev) => prev + 1);
-          setInitialLoading(false);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      const oldOrders = JSON.parse(localStorage.getItem('orders'));
-      let oldItems = JSON.parse(localStorage.getItem('items'))
-      console.log('orders from localstorage', oldOrders)
-      
-      const newItems = props.location.state.items;
-      const orderId = props.location.state.orderId
-      console.log('orderid from props', orderId);
-            const itemsString = newItems
-              .map((item) =>
-                item.id.toString().concat(',').concat(item.quantity.toString()),
-              )
-              .join(',');
-      let updatedOrder = oldOrders.find((order) => order.order.id === orderId)
-      console.log('order before edit', updatedOrder)
-      const updatedOrderIndex = oldOrders.indexOf(updatedOrder)
-      console.log('edit order index in the array', updatedOrderIndex)
-      updatedOrder = {...updatedOrder, orderItemsDtos: itemsString }
-      console.log('order after edit', updatedOrder);
-      console.log(
-        'new array of orders, first part',
-        ...oldOrders.slice(0, updatedOrderIndex),
+          sessionStorage.setItem(
+            'items',
+            JSON.stringify([...orderItems, ...newOrderItems]),
+          );
+          sessionStorage.setItem(
+            'orders',
+            JSON.stringify([...orders, ...newData]),
+          );
+        }
+
+        sessionStorage.setItem('nextPage', page + 1);
+        setLoading(true);
+      })
+      .finally(() => {});
+  };
+  const fetchMore = () => {
+    setPage((prev) => prev + 1);
+  };
+
+  const pageEnd = useRef();
+  useEffect(() => {
+    if (loading) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            fetchMore();
+          }
+        },
+        { threshold: 1 },
       );
-      console.log('new order', updatedOrder);
-      console.log(
-        'new new array of orders, last part',
-        ...oldOrders.slice(updatedOrderIndex + 1),
-      );
-      setOrders([
-        ...oldOrders.slice(0, updatedOrderIndex-1),
-        updatedOrder,
-        ...oldOrders.slice(updatedOrderIndex + 1),
-      ]);
-      newItems.forEach((item) =>
-        {
-          oldItems = oldItems.filter((i) => i.id !== item.id);
-        oldItems.push(item)
-      }
-      );
-      setOrderItems([...oldItems]);
-      
-      localStorage.removeItem('orders');
-      localStorage.removeItem('items');
-      localStorage.setItem('items', JSON.stringify([...oldItems]));
-      localStorage.setItem('orders', JSON.stringify([...oldOrders.slice(0, updatedOrderIndex), updatedOrder, ...oldOrders.slice(updatedOrderIndex + 1)]));
-      console.log('current page', current_page)
-      setCurrentPage((prev) => { 
-        console.log('prev page', prev)
-        return prev + 1
-      });
-      setInitialLoading(false);
-      setLoading(false)
+      observer.observe(pageEnd.current);
     }
-    
-    
   }, [loading]);
-  
-  
+
+  useEffect(() => {
+    fetch(page);
+  }, [page]);
+
+  // useEffect(() => {
+  //   document.addEventListener('scroll', scrollHandler);
+  //   return function () {
+  //     document.removeEventListener('scroll', scrollHandler);
+  //   };
+  // }, []);
+
+  // const scrollHandler = (e) => {
+  //   if (
+  //     e.target.documentElement.scrollHeight -
+  //       (e.target.documentElement.scrollTop + window.innerHeight) <
+  //     100
+  //   ) {
+  //     setLoading(true);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (props.location.state === null || props.location.state === undefined) {
+  //     const request = axios.request({
+  //       method: 'get',
+  //       url: urlGetOrders,
+  //       params: {
+  //         current_page,
+  //         items_on_page: 10,
+  //       },
+  //       data: {},
+  //     });
+  //     request
+  //       .then((response) => response.data)
+  // .then((data) => {
+  //   const newOrderItems = []
+  //   data.orderPage.items.map((item) => {
+  //     if(orderItems.indexOf(item) === -1) {
+  //       newOrderItems.push(item)
+  //     }
+  //   })
+  //   setOrderItems([...orderItems, ...newOrderItems]);
+  //   setOrders([
+  //     ...orders,
+  //     ...data.orderPage.orders.map(
+  //       (order) => (order = { ...order, clicked: false }),
+  //     ),
+  //   ]);
+  //   sessionStorage.removeItem('orders');
+  //   sessionStorage.removeItem('items')
+  //   sessionStorage.setItem('items', JSON.stringify(orderItems))
+  //   sessionStorage.setItem('orders', JSON.stringify(orders))
+  //   setCurrentPage((prev) => prev + 1);
+  //   setInitialLoading(false);
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // } else {
+  //   const oldOrders = JSON.parse(sessionStorage.getItem('orders'));
+  //   let oldItems = JSON.parse(sessionStorage.getItem('items'))
+
+  //   const newItems = props.location.state.items;
+  //   const orderId = props.location.state.orderId
+  //         const itemsString = newItems
+  //           .map((item) =>
+  //             item.id.toString().concat(',').concat(item.quantity.toString()),
+  //           )
+  //           .join(',');
+  //   let updatedOrder = oldOrders.find((order) => order.order.id === orderId)
+  //   const updatedOrderIndex = oldOrders.indexOf(updatedOrder)
+  //   updatedOrder = {...updatedOrder, orderItemsDtos: itemsString }
+  //     'new array of orders, first part',
+  //     ...oldOrders.slice(0, updatedOrderIndex-1),
+  //   );
+  //     'new new array of orders, last part',
+  //     ...oldOrders.slice(updatedOrderIndex + 1),
+  //   );
+  //   setOrders([
+  //     ...oldOrders.slice(0, updatedOrderIndex-1),
+  //     updatedOrder,
+  //     ...oldOrders.slice(updatedOrderIndex + 1),
+  //   ]);
+  //   newItems.map((item) =>
+  //     {
+  //       oldItems = oldItems.filter((i) => i.id !== item.id);
+  //     oldItems.push(item)
+  //   }
+  //   );
+  //   setOrderItems([...oldItems]);
+
+  //   sessionStorage.removeItem('orders');
+  //   sessionStorage.removeItem('items');
+  //   sessionStorage.setItem('items', JSON.stringify([...oldItems]));
+  //   sessionStorage.setItem('orders', JSON.stringify([...oldOrders.slice(0, updatedOrderIndex), updatedOrder, ...oldOrders.slice(updatedOrderIndex + 1)]));
+  //   setCurrentPage((prev) =>  prev + 1);
+  //   setInitialLoading(false);
+  //   setLoading(false)
+  // }
+
+  // }, [loading]);
+
   return (
     <>
       <div className="row pt-4 p-0">
         <div className="col-xl-12">
           {/*--------------------------------------------- ORDERS TABLE ---------------------------------*/}
-          {initialLoading ? (
-            <div>loading</div>
-          ) : (
+          {
             <div className="panel panel-flat dashboard-main-col mt-4">
               <div className="panel-heading">
                 <h4 className="panel-title pl-3 pt-3">
@@ -210,30 +297,29 @@ import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
                     <div className="small_cell">Price</div>
                     <div className="small_cell">Order Status</div>
                   </div>
-                  {orders.map((order, index) => {
-                    return (
-                      <div key={order.id}>
-                        <Order
+                  {orders.map((order, index) => (
+                    <div key={order.id}>
+                      <Order
+                        order={order.order}
+                        user={order.user}
+                        items={findItems(order.orderItemsDtos)}
+                        clickHandler={orderClickHandler}
+                        index={index}
+                        clicked={order.clicked}
+                      />
+                      {order.clicked && (
+                        <OrderDetails
                           order={order}
                           items={findItems(order.orderItemsDtos)}
-                          clickHandler={orderClickHandler}
                           index={index}
                         />
-                        {order.clicked && (
-                          <OrderDetails
-                            order={order}
-                            items={findItems(order.orderItemsDtos)}
-                            index={index}
-                          />
-                        )}
-                        ,
-                      </div>
-                    );
-                  })}
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
-          )}
+          }
         </div>
         {/* <div className="col-xl-12">
                 <div className="panel panel-flat dashboard-main-col mt-4">
@@ -279,12 +365,12 @@ import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
                 </div>
               </div> */}
 
-        <input
+        {/* <input
           type="hidden"
           value="pY6gC8jKMsLcmCxDC3mzp8vLFWrSSuBMUjKXWssv"
           className="csrfToken"
-        />
-        <div
+        /> */}
+        {/* <div
           id="newOrderModal"
           className="modal fade mt-5"
           tabIndex="-1"
@@ -314,11 +400,13 @@ import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
+      </div>
+      <div>
+        <button ref={pageEnd}>Load More</button>
       </div>
     </>
   );
 }
 
-
-export default OrdersListPage
+export default OrdersListPage;

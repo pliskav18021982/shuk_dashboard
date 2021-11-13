@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 
-import {Route} from 'react-router-dom'
 
 import './assets/styles/css.css'
   import './assets/styles/styles.css'
@@ -20,18 +20,17 @@ import Header from './components/Header';
 import Badges from './components/Badges';
 
 function App() {
- 
-
-
-  return (
+   return (
     <>
       <Header />
       <div className="page-content pt-0">
         <div className="content-wrapper">
           <div className="content mb-5">
             <Badges />
-            <Route path="/" exact component={OrdersListPage} />
-            <Route path="/orders/:id" component={OrderPage} />
+            <Routes>
+              <Route path="/" exact element={<OrdersListPage />} />
+            <Route path="/orders/:id" element={<OrderPage />} />
+            </Routes>
           </div>
         </div>
       </div>
