@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './orderpage.css';
+import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
 
 function OrderPage() {
   const location = useLocation();
@@ -8,7 +10,7 @@ function OrderPage() {
   const { order, items, user } = location.state;
 
   const [orderItems, setOrderItems] = useState(items);
-  const navigate = useNavigate();
+   const navigate = useNavigate();
 
   const increaseButtonClickHandler = (index) => {
     const quantity = parseInt(orderItems[index].quantity);
@@ -47,17 +49,29 @@ function OrderPage() {
   };
 
   const saveClickHandler = () => {
-    const str = orderItems
-      .map((item) => item.id + ',' + item.quantity)
-      .join(',');
-    const total = orderItems.reduce(
+    const urlOrderSave = `${ACCOUNT_SERVER_PATH}/order/${order.id}`
+
+    const str = orderItems.reduce((acc, item) => {
+      return acc.concat({ id: item.id, quantity: item.quantity, orderId: order.id, price: item.price});
+    },[])
+    console.log(JSON.stringify(str));
+    const total = parseFloat(orderItems.reduce(
       (total, item) => total + item.quantity * item.price,
       0,
-    );
-    console.log('total', total);
-    console.log(str);
-    console.log(order);
-    navigate(`/`, { state: { itemsString: str, orderId: order.id, total } });
+    )).toFixed(2);
+      const payloadtoSave = { order, user, orderItemsDtos: str };
+    const request = axios.request({
+      method: 'put',
+      url: urlOrderSave,
+      data: payloadtoSave,
+    });
+    request.then(response => {
+      console.log(response)
+      if(response.status === 200){
+        navigate(`/`, { state: { itemsString: str, orderId: order.id, total } });
+      }
+    })
+
   };
 
   return (

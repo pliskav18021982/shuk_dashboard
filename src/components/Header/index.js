@@ -42,7 +42,7 @@ export default function Header() {
   ];
   return (
     <>
-      <div className="navbar navbar-expand-md navbar-dark">
+      <div className="navbar navbar-expand-md navbar-dark movedtoright7">
         <div className="navbar-brand wmin-0 mr-5">
           <a
             href="https://54.216.45.40/public/store-owner/dashboard"
@@ -162,13 +162,15 @@ export default function Header() {
           </div>
           <div className="navbar-collapse collapse" id="navbar-navigation">
             <ul className="navbar-nav">
-              { links.map(link => 
+              {links.map((link) => (
                 <li className="nav-item" key={link.text}>
-                  <NavLink to={link.link} className={link.className}><i className={`${link.icon} mr-2`}></i>{link.text}</NavLink>
+                  <NavLink to={link.link} className={link.className}>
+                    <i className={`${link.icon} mr-2`}></i>
+                    {link.text}
+                  </NavLink>
                 </li>
-              )}
-                
-              
+              ))}
+
               {/* // <li className="nav-item">
               //   <a
               //     href="https://54.216.45.40/public/store-owner/stores"
@@ -209,8 +211,6 @@ export default function Header() {
                     Items
                   </a>
                 </div> */}
-
-              
             </ul>
           </div>
         </div>

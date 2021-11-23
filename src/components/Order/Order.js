@@ -2,26 +2,59 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import { orderStatuses } from '../../utils/orderstatuses';
 import { restaurants } from '../../utils/restaurants';
+import axios from 'axios';
+import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
+import { EDIT_ORDER, EDIT_ORDER_STATUS } from '../../utils/endpoints';
 
 function Order (props) {
   const navigate = useNavigate()
-  const { order, user, clickHandler, items, clicked } = props;
+  const { order, user, clickHandler, items, clicked, statusHandler } = props;
   const actionMenu = [
-    { action: 'accept', icon: 'icon-checkmark2', link: '' },
+    {
+      action: 'accept',
+      payloadStatus: '11',
+      icon: 'icon-checkmark2',
+      link: `${ACCOUNT_SERVER_PATH}${EDIT_ORDER}${order.id}${EDIT_ORDER_STATUS}`,
+      type: 'external',
+    },
     {
       action: 'edit',
       icon: 'icon-pencil',
       link: `/orders/${order.id}`,
+      type: 'internal',
     },
-    { action: 'delete', icon: 'icon-bin' },
+    {
+      action: 'delete',
+      payloadStatus: '6', 
+      icon: 'icon-bin',
+      link: `${ACCOUNT_SERVER_PATH}${EDIT_ORDER}${order.id}${EDIT_ORDER_STATUS}`,
+      type: 'external',
+    },
   ];
   const orderClick = (event) => {
     event.preventDefault();
     clickHandler(order.id);
   };
 
-  const actionClickHandler = (event, {link}) => {
-    navigate(`${link}`, { state: { order, user, items} });
+  const actionClickHandler = (event, {type, link, payloadStatus}) => {
+    if (type==='internal'){
+      navigate(`${link}`, { state: { order, user, items} })}
+    else{
+      const request = axios.request({
+        method: 'put',
+        url: link,
+        data: payloadStatus,
+        headers: {"Content-Type": "text/plain"},
+      });
+      console.log(request)
+      request
+        .then((response) => {
+          if(response.status===200) {
+            statusHandler(order.id, payloadStatus)
+          }
+        })
+        
+    }
   }
   
   return (
