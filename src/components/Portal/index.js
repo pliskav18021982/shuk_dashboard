@@ -6,8 +6,7 @@ function Portal() {
 
   return ReactDOM.createPortal(
     <>
-      <div className={`portal-wrapper overlayed'}`}>
-      </div>
+      <div className={`portal-wrapper overlayed'}`} />
     </>,
     document.getElementById('portal-root'),
   );

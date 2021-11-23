@@ -19,14 +19,14 @@ import OrdersListPage from './pages/OrdersListPage';
 import Header from './components/Header';
 import Badges from './components/Badges';
 import LeftMenu from './components/LeftMenu/LeftMenu';
-import { ACCOUNT_SERVER_PATH } from './utils/externalPaths';
+import { SERVER_PATH } from './utils/externalPaths';
 import { GET_NEW_ITEMS } from './utils/endpoints';
 import axios from 'axios';
 
 function App() {
   const [leftMenuItems, setLeftMenuItems] = useState([])
   const loadLeftMenu = () => {
-    const getUrl = `${ACCOUNT_SERVER_PATH}${GET_NEW_ITEMS}`;
+    const getUrl = `${SERVER_PATH}${GET_NEW_ITEMS}`;
     const request = axios.request({
         method: 'get',
         url: getUrl,

@@ -3,7 +3,7 @@ import React, {useState} from 'react'
 import './leftmenu.css'
 
 function LeftMenu({items}) {
-  const [isMenuExpanded, setIsMenuExpanded] = useState(true);
+  const [isMenuExpanded, setIsMenuExpanded] = useState(false);
   const overlayHandler = () => {
     setIsMenuExpanded(!isMenuExpanded);
   };

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './orderpage.css';
-import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
+import { SERVER_PATH } from '../../utils/externalPaths';
 
 function OrderPage() {
   const location = useLocation();
@@ -49,7 +49,7 @@ function OrderPage() {
   };
 
   const saveClickHandler = () => {
-    const urlOrderSave = `${ACCOUNT_SERVER_PATH}/order/${order.id}`
+    const urlOrderSave = `${SERVER_PATH}/order/${order.id}`
 
     const str = orderItems.reduce((acc, item) => {
       return acc.concat({ id: item.id, quantity: item.quantity, orderId: order.id, price: item.price});

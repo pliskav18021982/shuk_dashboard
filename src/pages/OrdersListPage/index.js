@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 import Order from '../../components/Order/Order';
 import OrderDetails from '../../components/OrderDetails/OrderDetails';
 import { GET_ORDERS } from '../../utils/endpoints';
-import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
+import { SERVER_PATH } from '../../utils/externalPaths';
 
 import './orderlist.css'
 
@@ -27,7 +27,7 @@ function OrdersListPage() {
 
   const location = useLocation();
 
-  const urlGetOrders = `${ACCOUNT_SERVER_PATH}/${GET_ORDERS}`;
+  const urlGetOrders = `${SERVER_PATH}/${GET_ORDERS}`;
 
   const orderClickHandler = (orderId) => {
     let orderClicked = orders.find((o) => o.order.id === orderId);

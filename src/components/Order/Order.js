@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { orderStatuses } from '../../utils/orderstatuses';
 import { restaurants } from '../../utils/restaurants';
 import axios from 'axios';
-import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
+import { SERVER_PATH } from '../../utils/externalPaths';
 import { EDIT_ORDER, EDIT_ORDER_STATUS } from '../../utils/endpoints';
 
 function Order (props) {
@@ -14,7 +14,7 @@ function Order (props) {
       action: 'accept',
       payloadStatus: '11',
       icon: 'icon-checkmark2',
-      link: `${ACCOUNT_SERVER_PATH}${EDIT_ORDER}${order.id}${EDIT_ORDER_STATUS}`,
+      link: `${SERVER_PATH}${EDIT_ORDER}${order.id}${EDIT_ORDER_STATUS}`,
       type: 'external',
     },
     {
@@ -27,7 +27,7 @@ function Order (props) {
       action: 'delete',
       payloadStatus: '6', 
       icon: 'icon-bin',
-      link: `${ACCOUNT_SERVER_PATH}${EDIT_ORDER}${order.id}${EDIT_ORDER_STATUS}`,
+      link: `${SERVER_PATH}${EDIT_ORDER}${order.id}${EDIT_ORDER_STATUS}`,
       type: 'external',
     },
   ];
