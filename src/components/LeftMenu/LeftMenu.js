@@ -1,9 +1,6 @@
-import React, {useState, useEffect} from 'react'
-import axios from 'axios'
+import React, {useState} from 'react'
 
 import './leftmenu.css'
-import { ACCOUNT_SERVER_PATH } from '../../utils/externalPaths';
-import { GET_NEW_ITEMS } from '../../utils/endpoints';
 
 function LeftMenu({items}) {
   const [isMenuExpanded, setIsMenuExpanded] = useState(true);

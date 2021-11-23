@@ -18,7 +18,6 @@ import OrderPage from './pages/OrderPage';
 import OrdersListPage from './pages/OrdersListPage';
 import Header from './components/Header';
 import Badges from './components/Badges';
-import Portal from './components/Portal';
 import LeftMenu from './components/LeftMenu/LeftMenu';
 import { ACCOUNT_SERVER_PATH } from './utils/externalPaths';
 import { GET_NEW_ITEMS } from './utils/endpoints';
@@ -26,7 +25,6 @@ import axios from 'axios';
 
 function App() {
   const [leftMenuItems, setLeftMenuItems] = useState([])
-  const [isPortalOpen, setIsPortalOpen] = useState(true)
   const loadLeftMenu = () => {
     const getUrl = `${ACCOUNT_SERVER_PATH}${GET_NEW_ITEMS}`;
     const request = axios.request({
@@ -61,7 +59,6 @@ function App() {
            </div>
          </div>
        </div>
-       {/* {isPortalOpen && <Portal />} */}
      </>
    );
 }

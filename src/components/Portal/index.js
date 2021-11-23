@@ -1,6 +1,5 @@
-import React, {useState} from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import LeftMenu from '../LeftMenu/LeftMenu'
 
 import './portal-base.css'
 function Portal() {
