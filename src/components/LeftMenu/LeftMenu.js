@@ -52,7 +52,9 @@ function LeftMenu({items}) {
             {isMenuExpanded && (
               <div className="left-menu-item-info">
                 <div>{menuItem.name}</div>
-                <div>{menuItem.totalItemsAddon}</div>
+                <div>Total: {menuItem.totalItemsAddon}</div>
+                <div>Limit: {menuItem.limit}</div>
+                <div>Remains: {menuItem.limit-menuItem.totalItemsAddon}</div>
               </div>
             )}
           </div>

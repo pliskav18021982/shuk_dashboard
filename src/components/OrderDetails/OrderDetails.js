@@ -11,17 +11,16 @@ export default function OrderDetails({ items }) {
       {items.map((item, index) => {
         return (
           <div className="item_row" key={`${item.id}${index}`}>
-            <div>{item.name}</div>
-            <div>{getDesc(item.desc)}</div>
-            <div>
+            <div className='item__row-item1'>{item.name}</div>
+            <div className="item__row-item2">
               <img
                 className="image_order_thumb"
                 src={`./..${item.image}`}
                 alt=""
               />
             </div>
-            <div>{`₪ ${item.price}`}</div>
-            <div>{item.quantity}</div>
+            <div className='item__row-item3'>{`₪ ${item.price}`}</div>
+            <div className='item__row-item4'>{item.quantity}</div>
           </div>
         );
       })}

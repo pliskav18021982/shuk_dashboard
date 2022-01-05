@@ -48,6 +48,9 @@
 .icon-white {
   color: white;
 }
+.icon-pr3 {
+  padding-right: 0.5rem;
+}
 .icon-rotate-90 {
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);

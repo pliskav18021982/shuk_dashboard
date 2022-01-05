@@ -15,13 +15,14 @@ import './assets/styles/css.css'
   import './assets/styles/backend-custom.css'
   import './assets/styles/bootstrap-material-datetimepicker.css'
 import OrderPage from './pages/OrderPage';
-import OrdersListPage from './pages/OrdersListPage';
+import OrdersListPage from './components/OrdersListPage';
 import Header from './components/Header';
 import Badges from './components/Badges';
 import LeftMenu from './components/LeftMenu/LeftMenu';
 import { SERVER_PATH } from './utils/externalPaths';
 import { GET_NEW_ITEMS } from './utils/endpoints';
 import axios from 'axios';
+import HomePage from './pages/HomePage';
 
 function App() {
   const [leftMenuItems, setLeftMenuItems] = useState([])
@@ -36,6 +37,7 @@ function App() {
       request
         .then((response) => response.data)
         .then((data) => {
+          console.log(data)
           setLeftMenuItems(data)
         });
     }
@@ -51,11 +53,14 @@ function App() {
        <div className="page-content pt-0 movedtoright7">
          <div className="content-wrapper">
            <div className="content mb-5">
-             <Badges />
-             <Routes>
-               <Route path="/" exact element={<OrdersListPage />} />
-               <Route path="/orders/:id" element={<OrderPage />} />
-             </Routes>
+              <Badges />
+              <div className="row pt-4 p-0">
+                <div className="col-xl-12">
+                  <div className="panel panel-flat dashboard-main-col mt-4 mb-4">
+                  </div>
+                </div>
+              </div>
+              <HomePage />
            </div>
          </div>
        </div>

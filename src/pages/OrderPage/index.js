@@ -52,7 +52,13 @@ function OrderPage() {
     const urlOrderSave = `${SERVER_PATH}/order/${order.id}`
 
     const str = orderItems.reduce((acc, item) => {
-      return acc.concat({ id: item.id, quantity: item.quantity, orderId: order.id, price: item.price});
+      return acc.concat({
+        id: item.id,
+        quantity: item.quantity,
+        orderId: order.id,
+        price: item.price,
+        limit: item.limit,
+      });
     },[])
     console.log(JSON.stringify(str));
     const total = parseFloat(orderItems.reduce(
