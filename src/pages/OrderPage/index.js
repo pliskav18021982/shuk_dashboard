@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -7,10 +9,10 @@ import { SERVER_PATH } from '../../utils/externalPaths';
 function OrderPage() {
   const location = useLocation();
 
-  const { order, items, user } = location.state;
+  const { order, items, user } = location.state ? location.state : {};
 
   const [orderItems, setOrderItems] = useState(items);
-   const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const increaseButtonClickHandler = (index) => {
     const quantity = parseInt(orderItems[index].quantity);
@@ -49,7 +51,7 @@ function OrderPage() {
   };
 
   const saveClickHandler = () => {
-    const urlOrderSave = `${SERVER_PATH}/order/${order.id}`
+    const urlOrderSave = `${SERVER_PATH}/order/${order.id}`;
 
     const str = orderItems.reduce((acc, item) => {
       return acc.concat({
@@ -59,25 +61,25 @@ function OrderPage() {
         price: item.price,
         limit: item.limit,
       });
-    },[])
+    }, []);
     console.log(JSON.stringify(str));
-    const total = parseFloat(orderItems.reduce(
-      (total, item) => total + item.quantity * item.price,
-      0,
-    )).toFixed(2);
-      const payloadtoSave = { order, user, orderItemsDtos: str };
+    const total = parseFloat(
+      orderItems.reduce((total, item) => total + item.quantity * item.price, 0),
+    ).toFixed(2);
+    const payloadtoSave = { order, user, orderItemsDtos: str };
     const request = axios.request({
       method: 'put',
       url: urlOrderSave,
       data: payloadtoSave,
     });
-    request.then(response => {
-      console.log(response)
-      if(response.status === 200){
-        navigate(`/`, { state: { itemsString: str, orderId: order.id, total } });
+    request.then((response) => {
+      console.log(response);
+      if (response.status === 200) {
+        navigate(`/`, {
+          state: { itemsString: str, orderId: order.id, total },
+        });
       }
-    })
-
+    });
   };
 
   return (

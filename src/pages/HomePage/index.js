@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import OrdersList from '../../components/OrdersListPage';
 
 const HomePage = () => {
@@ -6,7 +6,7 @@ const HomePage = () => {
     <>
       <OrdersList />
     </>
-  )
-}
+  );
+};
 
 export default HomePage;

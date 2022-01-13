@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
+
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { orderStatuses } from '../../utils/orderstatuses';
 import { restaurants } from '../../utils/restaurants';
 import axios from 'axios';
@@ -8,12 +10,15 @@ import { EDIT_ORDER, EDIT_ORDER_STATUS } from '../../utils/endpoints';
 import { clearTextFromComas } from '../../utils/clearTextFromComas';
 import formatDate from '../../utils/getFormattedDate';
 
+
+import './order.css'
+
 function Order(props) {
   const navigate = useNavigate();
   const { order, user, clickHandler, items, clicked, statusHandler } = props;
   const date =
     order.orderDate !== null ? JSON.parse(order.orderDate).date : 'oops';
-  console.log(`order ${order.id}`, order);
+  // console.log(`order ${order.id}`, order);
   const actionMenu = [
     {
       action: 'accept',
@@ -64,13 +69,7 @@ function Order(props) {
     <>
       <div className="order-row-item1">{order.id}</div>
       <div className="order-row-item2">
-        <a
-          href={`https://54.216.45.40/public/store-owner/order/${order.unique_order_id}`}
-          className="small_cell letter-icon-title bold_text"
-          onClick={orderClick}
-        >
-          {clicked ? `hide` : `show`}
-        </a>
+        <div className='show__button' onClick={() => clickHandler(order.id)}>{clicked ? `hide` : `show`}</div>
       </div>
       <div className="order-row-item3">
         <div>{user.name}</div>

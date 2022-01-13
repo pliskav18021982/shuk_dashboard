@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import axios from 'axios';
@@ -9,7 +11,7 @@ import OrderDetails from '../OrderDetails/OrderDetails';
 import { GET_ORDERS } from '../../utils/endpoints';
 import { SERVER_PATH } from '../../utils/externalPaths';
 
-import './orderlist.css'
+import './orderlist.css';
 
 function OrdersList() {
   const [orders, setOrders] = useState(
@@ -22,14 +24,15 @@ function OrdersList() {
   const [page, setPage] = useState(
     parseInt(sessionStorage.getItem('nextPage')) || 0,
   );
-  const [totalOrders, setTotalOrders] = useState(0)
-  const [showEndMessage, setShowEndMessage] = useState(false)
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [showEndMessage, setShowEndMessage] = useState(false);
 
   const location = useLocation();
 
   const urlGetOrders = `${SERVER_PATH}/${GET_ORDERS}`;
 
   const orderClickHandler = (orderId) => {
+    console.log(orderId)
     let orderClicked = orders.find((o) => o.order.id === orderId);
     const orderIndex = orders.findIndex((o) => o.order.id === orderId);
     const click = orderClicked.clicked;
@@ -43,17 +46,17 @@ function OrdersList() {
   };
 
   const statusClickHandler = (orderId, status) => {
-    let orderClicked = orders.find((o) => o.order.id === orderId)
-    const orderIndex = orders.findIndex((o) => o.order.id === orderId)
-    let {order} = orderClicked
+    let orderClicked = orders.find((o) => o.order.id === orderId);
+    const orderIndex = orders.findIndex((o) => o.order.id === orderId);
+    let { order } = orderClicked;
     order = { ...order, orderstatus_id: status };
-    orderClicked = {...orderClicked, order}
+    orderClicked = { ...orderClicked, order };
     setOrders([
       ...orders.slice(0, orderIndex),
       orderClicked,
-      ...orders.slice(orderIndex + 1)
-    ])
-  }
+      ...orders.slice(orderIndex + 1),
+    ]);
+  };
 
   const findItems = (itemList) => {
     const items = [];
@@ -67,7 +70,11 @@ function OrdersList() {
 
   const fetch = (currentPage) => {
     let orderData;
-    if (orders.length === 0 || totalOrders===0 || orders.length < totalOrders) {
+    if (
+      orders.length === 0 ||
+      totalOrders === 0 ||
+      orders.length < totalOrders
+    ) {
       const request = axios.request({
         method: 'get',
         url: urlGetOrders,
@@ -81,8 +88,8 @@ function OrdersList() {
       request
         .then((response) => response.data)
         .then((data) => {
-          console.log(data)
-          setTotalOrders(data.total_count)
+          console.log(data);
+          setTotalOrders(data.total_count);
           const newOrderItems = [];
           data.orderPage.items.forEach((item) => {
             if (orderItems.indexOf(item) === -1) {
@@ -156,7 +163,7 @@ function OrdersList() {
         })
         .finally(() => {});
     } else {
-      setShowEndMessage(true)
+      setShowEndMessage(true);
     }
   };
   const fetchMore = () => {
@@ -183,48 +190,47 @@ function OrdersList() {
     fetch(page);
   }, [page]);
 
-
   return (
-    <>  
+    <>
       <div id="newOrdersTable" className="grid-table">
-            <div className="grid-item-header header">
-              <div className="header-item1">Order Id</div>
-              <div className="header-item2">Order Info</div>
-              {/* <div>Client's Info</div> */}
-              <div className="header-item3">
-                <div>Client's Name</div>
-                <div>Client's Phone</div>
-                <div>Client's Email</div>
-              </div>
-              <div className="header-item4">
-                <div>Store</div>
-                <div>Price</div>
-                <div>Order Status</div>
-              </div>
-              <div className="header-item5">Action</div>
-            </div>
-            {orders.map((order, index) => (
-              <div className="order-row-grid" key={order.id}>
-                <Order
-                  order={order.order}
-                  user={order.user}
-                  items={findItems(order.orderItemsDtos)}
-                  clickHandler={orderClickHandler}
-                  index={index}
-                  clicked={order.clicked}
-                  statusHandler={statusClickHandler}
-                />
-                {order.clicked && (
-                  <OrderDetails
-                    order={order}
-                    items={findItems(order.orderItemsDtos)}
-                    index={index}
-                  />
-                )}
-              </div>
-            ))}
+        <div className="grid-item-header header">
+          <div className="header-item1">Order Id</div>
+          <div className="header-item2">Order Info</div>
+          {/* <div>Client's Info</div> */}
+          <div className="header-item3">
+            <div>Client's Name</div>
+            <div>Client's Phone</div>
+            <div>Client's Email</div>
+          </div>
+          <div className="header-item4">
+            <div>Store</div>
+            <div>Price</div>
+            <div>Order Status</div>
+          </div>
+          <div className="header-item5">Action</div>
+        </div>
+        {orders.map((order, index) => (
+          <div className="order-row-grid" key={order.id}>
+            <Order
+              order={order.order}
+              user={order.user}
+              items={findItems(order.orderItemsDtos)}
+              clickHandler={orderClickHandler}
+              index={index}
+              clicked={order.clicked}
+              statusHandler={statusClickHandler}
+            />
+            {order.clicked && (
+              <OrderDetails
+                order={order}
+                items={findItems(order.orderItemsDtos)}
+                index={index}
+              />
+            )}
+          </div>
+        ))}
       </div>
-         
+
       <div className="load-controls">
         {showEndMessage ? (
           <div>No more items to load</div>
