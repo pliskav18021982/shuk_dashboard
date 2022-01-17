@@ -17,7 +17,7 @@ export default function OrderDetails({ items }) {
             <div className="item__row-item2">
               <img
                 className="image_order_thumb"
-                src={`./..${item.image}`}
+                src={`https://shuk.club${item.image}`}
                 alt=""
               />
             </div>

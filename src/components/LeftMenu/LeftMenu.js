@@ -46,7 +46,7 @@ function LeftMenu({items}) {
             <div
               className={`${isMenuExpanded} ? left-menu-thumb : left-menu-image`}
             >
-              <img src={`./..${menuItem.image}`} alt="" />
+              <img src={`https://shuk.club/${menuItem.image}`} alt="" />
             </div>
 
             {isMenuExpanded && (
