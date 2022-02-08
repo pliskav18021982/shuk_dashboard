@@ -4,40 +4,39 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OrdersList from '../../components/OrdersListPage';
-import { GET_ORDERS } from '../../utils/endpoints';
+import { GET_ORDERS, SEARCH_ORDERS } from '../../utils/endpoints';
 import { SERVER_PATH } from '../../utils/externalPaths';
 
-function SearchPage({ params }) {
-  console.log(params);
+function SearchPage() {
+  const location = useLocation();
+
+  const { fromPage, searchParams } = location.state;
+    
+  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const [searchResults, setSearchResults] = useState(
-    JSON.parse(sessionStorage.getItem('searchResults')) || [],
+    fromPage !== '/' ? JSON.parse(sessionStorage.getItem('searchResults')) : [],
   );
 
   const [searchOrderItems, setSearchResultsOrderItems] = useState(
-    JSON.parse(sessionStorage.getItem('searchOrderItems')) || [],
+    fromPage !== '/' ? JSON.parse(sessionStorage.getItem('searchOrderItems')) : [],
   );
 
   const [searchPage, setSearchPage] = useState(
-    parseInt(sessionStorage.getItem('nextSearchPage')) || 0,
+    fromPage !== '/' ? parseInt(sessionStorage.getItem('nextSearchPage')) : 0,
   );
-
-  // const [params, setParams] = useState({
-  //   current_page: searchPage,
-  //   items_on_page: 10,
-  // });
 
   const [showEndMessage, setShowEndMessage] = useState(false);
 
   const [totalSearchResults, setTotalSearchResults] = useState(0);
 
-  const location = useLocation();
+  const urlGetOrders = `${SERVER_PATH}/${SEARCH_ORDERS}`;
 
-  const urlGetOrders = `${SERVER_PATH}/${GET_ORDERS}`;
-
-  const searchOrderClickHandler = (orderId) => {
+  const orderClickHandler = (orderId) => {
+    console.log('oops');
+    console.log(orderId);
     let orderClicked = searchResults.find((o) => o.order.id === orderId);
     const orderIndex = searchResults.findIndex((o) => o.order.id === orderId);
     const click = orderClicked.clicked;
@@ -50,7 +49,21 @@ function SearchPage({ params }) {
     setSearchResults(newOrdersList);
   };
 
-  const searchStatusClickHandler = (orderId, status) => {
+  // const searchOrderClickHandler = (orderId) => {
+  //   let orderClicked = searchResults.find((o) => o.order.id === orderId);
+  //   const orderIndex = searchResults.findIndex((o) => o.order.id === orderId);
+  //   const click = orderClicked.clicked;
+  //   orderClicked = { ...orderClicked, clicked: !click };
+  //   const newOrdersList = [
+  //     ...searchResults.slice(0, orderIndex),
+  //     orderClicked,
+  //     ...searchResults.slice(orderIndex + 1),
+  //   ];
+  //   setSearchResults(newOrdersList);
+  // };
+
+  const statusClickHandler = (orderId, status) => {
+    console.log('status', status);
     let orderClicked = searchResults.find((o) => o.order.id === orderId);
     const orderIndex = searchResults.findIndex((o) => o.order.id === orderId);
     let { order } = orderClicked;
@@ -83,14 +96,13 @@ function SearchPage({ params }) {
       const request = axios.request({
         method: 'get',
         url: urlGetOrders,
-        params,
+        params: { ...searchParams, current_page: searchPage},
         data: {},
       });
 
       request
         .then((response) => response.data)
         .then((data) => {
-          console.log(data);
           setTotalSearchResults(data.total_count);
           const newOrderItems = [];
           data.orderPage.items.forEach((item) => {
@@ -103,48 +115,48 @@ function SearchPage({ params }) {
               (order) => (order = { ...order, clicked: false }),
             ),
           ];
-          if (location !== null && location.state !== null) {
-            orderData = location.state.itemsString;
-            console.log('orderdata', orderData);
-            const orderId = location.state.orderId;
-            const total = location.state.total;
+          // if (location !== null && location.state !== null) {
+          //   orderData = location.state.itemsString;
+          //   console.log('orderdata', orderData);
+          //   const orderId = location.state.orderId;
+          //   const total = location.state.total;
 
-            let orderEdited = searchResults.find(
-              (obj) => obj.order.id === orderId,
-            );
-            let { order } = orderEdited;
-            order = { ...order, total };
-            orderEdited = { ...orderEdited, order, orderItemsDtos: orderData };
-            console.log(orderEdited);
+          //   let orderEdited = searchResults.find(
+          //     (obj) => obj.order.id === orderId,
+          //   );
+          //   let { order } = orderEdited;
+          //   order = { ...order, total };
+          //   orderEdited = { ...orderEdited, order, orderItemsDtos: orderData };
+          //   console.log(orderEdited);
 
-            const updatedIndex = searchResults.findIndex(
-              (o) => o.order.id === orderId,
-            );
-            setSearchResultsOrderItems([...searchOrderItems, ...newOrderItems]);
-            setSearchResults([
-              ...searchResults.slice(0, updatedIndex),
-              orderEdited,
-              ...searchResults.slice(updatedIndex + 1),
-              ...data.orderPage.orders.map(
-                (order) => (order = { ...order, clicked: false }),
-              ),
-            ]);
-            sessionStorage.setItem(
-              'searchOrderItems',
-              JSON.stringify([...searchOrderItems, ...newOrderItems]),
-            );
-            sessionStorage.setItem(
-              'searchResults',
-              JSON.stringify([
-                ...searchResults.slice(0, updatedIndex),
-                orderEdited,
-                ...searchResults.slice(updatedIndex + 1),
-                ...data.orderPage.orders.map(
-                  (order) => (order = { ...order, clicked: false }),
-                ),
-              ]),
-            );
-          } else {
+          //   const updatedIndex = searchResults.findIndex(
+          //     (o) => o.order.id === orderId,
+          //   );
+          //   setSearchResultsOrderItems([...searchOrderItems, ...newOrderItems]);
+          //   setSearchResults([
+          //     ...searchResults.slice(0, updatedIndex),
+          //     orderEdited,
+          //     ...searchResults.slice(updatedIndex + 1),
+          //     ...data.orderPage.orders.map(
+          //       (order) => (order = { ...order, clicked: false }),
+          //     ),
+          //   ]);
+          //   sessionStorage.setItem(
+          //     'searchOrderItems',
+          //     JSON.stringify([...searchOrderItems, ...newOrderItems]),
+          //   );
+          //   sessionStorage.setItem(
+          //     'searchResults',
+          //     JSON.stringify([
+          //       ...searchResults.slice(0, updatedIndex),
+          //       orderEdited,
+          //       ...searchResults.slice(updatedIndex + 1),
+          //       ...data.orderPage.orders.map(
+          //         (order) => (order = { ...order, clicked: false }),
+          //       ),
+          //     ]),
+          //   );
+          // } else {
             setSearchResultsOrderItems([...searchOrderItems, ...newOrderItems]);
             setSearchResults([
               ...searchResults,
@@ -160,7 +172,7 @@ function SearchPage({ params }) {
               'searchResults',
               JSON.stringify([...searchResults, ...newData]),
             );
-          }
+          // }
 
           sessionStorage.setItem('nextSearchPage', searchPage + 1);
           setLoading(true);
@@ -171,6 +183,8 @@ function SearchPage({ params }) {
     }
   };
   const fetchMore = () => {
+    console.log('Fetching more')
+    console.log(searchParams)
     setSearchPage((prev) => prev + 1);
   };
 
@@ -187,28 +201,22 @@ function SearchPage({ params }) {
       observer.observe(pageEnd.current);
     }
   }, [loading]);
+
   useEffect(() => {
     fetch(searchPage);
-  }, [searchPage, params]);
+  }, [searchPage]);
 
-  // const searchClickHandler = () => {
-  //   setSearchParams({ ...searchParams, userName: 'Макс' });
-  // };
-  // const changeMessageHandler = (text) => {
-  //   navigate('search');
-  //   setMessage(text);
-  // };
+  
   const pageEnd = useRef();
   return (
     <>
-      <h1>SearchPage</h1>
-      <h3>{`We found ${totalSearchResults} results on your request`}</h3>
+      <h3 className="mb-4 mt-4">{`We found ${totalSearchResults} results on your request`}</h3>
       {totalSearchResults > 0 && (
         <OrdersList
           orders={searchResults}
           orderItems={searchOrderItems}
-          orderClickHandler={searchOrderClickHandler}
-          statusClickHandler={searchStatusClickHandler}
+          clickHandler={orderClickHandler}
+          statusClickHandler={statusClickHandler}
           findItems={findItems}
         />
       )}

@@ -27,7 +27,7 @@ export default function Badges() {
   return (
     
     <>
-      <div className="row mt-3">
+      <div className="row mt-2">
         {content.map((item, index) => <Badge key={item.id+index} content={item}/>)}
       </div>
     </>

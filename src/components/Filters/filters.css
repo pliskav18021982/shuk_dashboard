@@ -1,0 +1,151 @@
+.filters-wrapper {
+  width: 100%;
+}
+.text__input__filters__row {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.selectable__filters_row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.filter__item__container,
+.selectable__filter__item__container {
+  position: relative;
+  max-width: 600px;
+  width: 600px;
+  padding-top: 1rem;
+  margin-top: 2rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.selectable__filter__item__container {
+  background-color: rgba(4, 87, 165, 0.6);
+  padding: 1rem;
+  border-radius: 15px;
+}
+.filter__input-label,
+.selectable__filter__input-label {
+  position: absolute;
+  font-weight: 700;
+  /* color: #11998e; */
+  top: 1.2rem;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  /* top: 9px; */
+  /* color: transparent; */
+  transition: 0.3s;
+  z-index: -1;
+  letter-spacing: 0.5px;
+}
+.filter__input-text,
+.filter__input-icon {
+  outline: 0;
+  color: #333;
+  font-family: inherit;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  letter-spacing: 1px;
+  border: 0;
+  padding: 4px 0;
+  border-bottom: 1px solid #ccc;
+  background-color: transparent;
+  transition: border-color 0.2s;
+}
+:focus {
+  outline: none;
+}
+.filter__input-text:focus {
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  letter-spacing: 1px;
+}
+
+.filter__input-text ~ .focus-border {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #4caf50;
+  transition: 0.4s;
+}
+.filter__input-text:focus ~ .focus-border {
+  width: 100%;
+}
+
+.filter__input-text:focus ~ label,
+.filter__input-text:not(:placeholder-shown) ~ label {
+  top: -16px;
+  z-index: 1;
+  color: #8360c3;
+  transition: 0.3s;
+}
+.filter__input-text::placeholder {
+  color: #333;
+}
+.filter__input-icon {
+  width: 80%;
+  margin-left: 1rem;
+}
+.filter__input-div-input {
+  display: flex;
+}
+.filter__input-icon-calendar {
+  cursor: pointer;
+}
+.filter__input-down {
+  width: 100%;
+  position: relative;
+}
+.filter__input-down ~ label {
+  top: -25px;
+  z-index: 1;
+  color: #8360c3;
+  transition: 0.3s;
+}
+/* <select> styles */
+select {
+  appearance: none;
+  border: 0;
+  outline: 0;
+  font: inherit;
+
+  height: 3rem;
+  padding: 0 4rem 0 1rem;
+  background: url('https://upload.wikimedia.org/wikipedia/commons/9/9d/Caret_down_font_awesome_whitevariation.svg')
+      no-repeat right 0.8em center / 1.4em,
+    linear-gradient(
+      to left,
+      rgba(255, 255, 255, 0.3) 3rem,
+      rgba(255, 255, 255, 0.2) 3rem
+    );
+  color: white;
+  border-radius: 0.25rem;
+  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.filter__down__styled-option {
+  color: inherit;
+  background-color: #8360c3;
+}
+.filter__down__styled-option::hover {
+  background-color: yellow;
+}
+select :focus {
+  outline: none;
+}
+/* Remove IE arrow */
+select ::-ms-expand {
+  display: none;
+}

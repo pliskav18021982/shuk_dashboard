@@ -16,6 +16,7 @@ import './assets/styles/backend-custom.css';
 import './assets/styles/bootstrap-material-datetimepicker.css';
 import OrderPage from './pages/OrderPage';
 import OrdersListPage from './components/OrdersListPage';
+import Filters from './components/Filters';
 import Header from './components/Header';
 import Badges from './components/Badges';
 import LeftMenu from './components/LeftMenu/LeftMenu';
@@ -23,9 +24,11 @@ import { SERVER_PATH } from './utils/externalPaths';
 import { GET_NEW_ITEMS } from './utils/endpoints';
 import axios from 'axios';
 import HomePage from './pages/HomePage';
+import SearchPage from './pages/SearchPage';
 
 function App() {
   const [leftMenuItems, setLeftMenuItems] = useState([]);
+  const [filterItems, setFilterItems]= useState([]);
   const loadLeftMenu = () => {
     const getUrl = `${SERVER_PATH}${GET_NEW_ITEMS}`;
     const request = axios.request({
@@ -39,6 +42,7 @@ function App() {
       .then((data) => {
         console.log(data);
         setLeftMenuItems(data);
+        setFilterItems([...data.map(item => item = {name: item.name, id: item.id})])
       });
   };
 
@@ -54,14 +58,11 @@ function App() {
         <div className="content-wrapper">
           <div className="content mb-5">
             <Badges />
+            
             <Routes>
-              <div className="row pt-4 p-0">
-                <div className="col-xl-12">
-                  <div className="panel panel-flat dashboard-main-col mt-4 mb-4"></div>
-                </div>
-              </div>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<HomePage items={filterItems} />} />
               <Route path="orders/:id" element={<OrderPage />} />
+              <Route path="search" element={<SearchPage />} />
             </Routes>
           </div>
         </div>
