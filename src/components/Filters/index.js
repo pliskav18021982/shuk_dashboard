@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Checkbox from '../../ui/Checkbox';
 import formatDate from '../../utils/getFormattedDate';
 import Calendar from '../Calendar';
 
@@ -84,6 +85,22 @@ function Filters({  params, searchClickHandler, items }) {
             <span className="focus-border"></span>
           </div>
         </div>
+        <div className="checkbox_filter_row">
+          {items.map((item) => (
+            <>
+              <Checkbox
+                label={item.name}
+                name='orderItem'
+                value={item.name}
+                id={item.name}
+                inputClassName="filter__checkbox__input"
+                labelClassName="filter__checkbox__label"
+              />
+            </>
+          ))}
+
+          
+        </div>
         <div className="selectable__filters_row">
           <div className="selectable__filter__item__container">
             <select
@@ -135,7 +152,35 @@ function Filters({  params, searchClickHandler, items }) {
               By Date
             </label>
           </div>
-          
+          <div className="filter__item__container">
+            <span
+              className="filter__input-icon-calendar"
+              onClick={() => setShowRangeCalendar(!showRangeCalendar)}
+            >
+              <i className="icon-calendar"></i>
+            </span>
+            {showRangeCalendar && (
+              <Calendar
+                setShowCalendar={setShowRangeCalendar}
+                dateFrom={orderDateFrom}
+                dateTo={orderDateTo}
+                setOrderDateFrom={setOrderDateFrom}
+                setOrderDateTo={setOrderDateTo}
+                showCalendar={showRangeCalendar}
+              />
+            )}
+            <input
+              type="text"
+              name="orderDate"
+              className="filter__input-icon"
+              placeholder="From: yyyy-mm-dd - To: yyyy-mm-dd"
+              onChange={dateChangeHandler}
+              value={`From: ${orderDateFrom} - To: ${orderDateTo}`}
+            />
+            <label className="filter__input-label" htmlFor="orderDate">
+              By Date Range
+            </label>
+          </div>
 
           <div>
             <button

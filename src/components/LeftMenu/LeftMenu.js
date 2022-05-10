@@ -1,5 +1,8 @@
 import React, {useState} from 'react'
 
+import { SERVER_PATH } from '../../utils/externalPaths';
+
+
 import './leftmenu.css'
 
 function LeftMenu({items}) {
@@ -46,7 +49,7 @@ function LeftMenu({items}) {
             <div
               className={`${isMenuExpanded} ? left-menu-thumb : left-menu-image`}
             >
-              <img src={`https://shuk.club/${menuItem.image}`} alt="" />
+              <img src={`${menuItem.image}`} alt="" />
             </div>
 
             {isMenuExpanded && (

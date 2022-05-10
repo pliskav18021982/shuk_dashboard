@@ -3,7 +3,9 @@ import React from 'react'
 
 import {NavLink} from 'react-router-dom'
 
-export default function Header() {
+import './header.css'; 
+
+export default function Header({ toggleSearchBlock, showSearchBlock }) {
   // <a
   //                 href="#"
   //                 className="navbar-nav-link dropdown-toggle "
@@ -12,7 +14,7 @@ export default function Header() {
   //                 <i className="icon-stack-star mr-2"></i>
   //                 Items &amp; Menu
   //               </a>
-               
+
   const links = [
     {
       link: '/home',
@@ -38,7 +40,6 @@ export default function Header() {
       icon: 'icon-coin-dollar',
       className: 'navbar-nav-link',
     },
-    
   ];
   return (
     <>
@@ -161,17 +162,19 @@ export default function Header() {
             </button>
           </div>
           <div className="navbar-collapse collapse" id="navbar-navigation">
-            <ul className="navbar-nav">
-              {links.map((link) => (
-                <li className="nav-item" key={link.text}>
-                  <NavLink to={link.link} className={link.className}>
-                    <i className={`${link.icon} mr-2`}></i>
-                    {link.text}
-                  </NavLink>
-                </li>
-              ))}
+            <div className="header__menu-container">
+              <div className="header__menu">
+                <ul className="navbar-nav">
+                  {links.map((link) => (
+                    <li className="nav-item" key={link.text}>
+                      <NavLink to={link.link} className={link.className}>
+                        <i className={`${link.icon} mr-2`}></i>
+                        {link.text}
+                      </NavLink>
+                    </li>
+                  ))}
 
-              {/* // <li className="nav-item">
+                  {/* // <li className="nav-item">
               //   <a
               //     href="https://54.216.45.40/public/store-owner/stores"
               //     className="navbar-nav-link "
@@ -180,7 +183,7 @@ export default function Header() {
               //     Stores
               //   </a>
               // </li> */}
-              {/* <li className="nav-item dropdown">
+                  {/* <li className="nav-item dropdown">
                 <div className="dropdown-menu">
                   <a
                     href="https://54.216.45.40/public/store-owner/addoncategories"
@@ -211,7 +214,14 @@ export default function Header() {
                     Items
                   </a>
                 </div> */}
-            </ul>
+                </ul>
+              </div>
+              <div className="header__buttons">
+                <button className="button-blue" onClick={toggleSearchBlock}>
+                  {showSearchBlock ? 'Exit Search' : 'Search'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

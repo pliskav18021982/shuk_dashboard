@@ -8,8 +8,8 @@ import OrdersList from '../../components/OrdersListPage';
 import { GET_ORDERS, SEARCH_ORDERS } from '../../utils/endpoints';
 import { SERVER_PATH } from '../../utils/externalPaths';
 
-const HomePage = ({items}) => {
-  console.log(items)
+const HomePage = ({ items, showSearchBlock }) => {
+  console.log(items);
   const [orders, setOrders] = useState(
     JSON.parse(sessionStorage.getItem('orders')) || [],
   );
@@ -25,7 +25,7 @@ const HomePage = ({items}) => {
 
   const [params, setParams] = useState({
     current_page: page,
-    items_on_page: 10,
+    items_on_page: 3,
   });
 
   const location = useLocation();
@@ -84,8 +84,12 @@ const HomePage = ({items}) => {
         params: searchParams,
         data: {},
       });
+      console.log(request);
       request
-        .then((response) => response.data)
+        .then((response) => {
+          console.log('response', response);
+          return response.data;
+        })
         .then((data) => {
           console.log(data);
           setTotalOrders(data.total_count);
@@ -169,13 +173,13 @@ const HomePage = ({items}) => {
   const fetchMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    const prevParams = params
-    setParams({...prevParams, currentPage: nextPage});
+    const prevParams = params;
+    setParams({ ...prevParams, currentPage: nextPage });
   };
 
   const searchClickHandler = (params) => {
     setParams(params);
-  }
+  };
 
   const pageEnd = useRef();
 
@@ -202,7 +206,13 @@ const HomePage = ({items}) => {
       <div className="row pt-4 p-0">
         <div className="col-xl-12">
           <div className="panel panel-flat dashboard-main-col mt-2 mb-4">
-            <Filters searchClickHandler={searchClickHandler} params={params} items={items}/>
+            {showSearchBlock && (
+              <Filters
+                searchClickHandler={searchClickHandler}
+                params={params}
+                items={items}
+              />
+            )}
           </div>
         </div>
       </div>
